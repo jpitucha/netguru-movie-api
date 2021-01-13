@@ -1,0 +1,19 @@
+{
+  "name": "netguru-movie-api",
+  "version": "1.0.0",
+  "description": "Netguru recruitment task",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jpitucha/netguru-movie-api.git"
+  },
+  "author": "Jakub Pitucha",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jpitucha/netguru-movie-api/issues"
+  },
+  "homepage": "https://github.com/jpitucha/netguru-movie-api#readme"
+}
