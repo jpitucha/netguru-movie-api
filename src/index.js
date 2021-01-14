@@ -1,6 +1,7 @@
 const express = require('express')
-const body_parser = require('body-parser')
-const Utilities = require('./utils')
+const bodyParser = require('body-parser')
+const Utilities = require('./utils/index')
+const routes = require('./routes/index')
 
 require('dotenv').config()
 
@@ -10,8 +11,9 @@ if (!Utilities.hasDotEnvVars()) {
 }
 
 const app = express()
-app.use(body_parser.json())
-app.use(body_parser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(routes)
 
 app.listen(process.env.PORT, () => {
     console.log(`API is running at http://localhost:${process.env.PORT}`)
