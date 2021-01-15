@@ -1,42 +1,40 @@
 const express = require('express')
 const { authUser, getMoviesByUser, isUserWithinUsageLimit, checkIfMovieExists, createMovie } = require('../utils')
-const Movie = require('./../db/schema/movieSchema')
 
-const routes = express.Router()
+const router = express.Router()
 
-routes.get('/movies', async (req, res) => {
+function authUserMiddleware(req, res, next) {
     const userDetails = authUser(req)
-    if (!userDetails) return res.sendStatus(400)
+    if(!userDetails) return res.sendStatus(400)
+    req.userDetails = userDetails;
+    return next()
+  }
+
+router.get('/movies', async (req, res) => {
     try {
-       const movieList = await getMoviesByUser(userDetails.userId)
+       const movieList = await getMoviesByUser(req.userDetails.userId)
        return res.json(movieList)
-    } catch {
+    } catch (err) {
+        console.log(err);
         return res.sendStatus(500)
     }
 })
 
-routes.post('/movies', async (req, res) => {
-    const userDetails = authUser(req)
-    if (!userDetails) return res.sendStatus(401)
-
-    if (userDetails.role === 'basic') {
-        try {
-            const countCondition = await isUserWithinUsageLimit(userDetails.userId)
-            if (!countCondition) return res.json('user reached limit of saved movies')
-        } catch {
-            return res.sendStatus(500)
-        }
-    }
-        
+router.post('/movies', async (req, res) => {
     try {
+        if (req.userDetails.role === 'basic') {
+            const countCondition = await isUserWithinUsageLimit(req.userDetails.userId)
+            if (!countCondition) return res.json('user reached limit of saved movies')
+        }
         if (await checkIfMovieExists(req.body.title)) {
             return res.status(500).send('movie already exists')
         }
-        const savedMovie = await createMovie(req.body.title, userDetails)
+        const savedMovie = await createMovie(req.body.title, req.userDetails)
         return res.json(savedMovie)
-    } catch {
+    } catch (err) {
+        console.log(err);
         return res.sendStatus(500)
     }
 })
 
-module.exports = routes
+module.exports = { router, authUserMiddleware }

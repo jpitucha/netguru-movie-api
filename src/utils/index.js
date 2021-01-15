@@ -18,6 +18,7 @@ function hasDotEnvVars() {
 function authUser(httpRequest) {
     const authHeader = httpRequest.headers['authorization']
     if (!authHeader) return null
+    //if (authHeader.split(' ')[0] !== 'Bearer') return 
     const token = authHeader.split(' ')[1]
     if (!token) return null
     let userDetails
@@ -43,8 +44,7 @@ async function isUserWithinUsageLimit(userID) {
         createdBy: userID,
         createdAt: getCurrentMonthAndYear()
     }).exec()
-    if (count >= 5) return false
-    return true
+    return count < 5
 }
 
 function getCurrentMonthAndYear() {
@@ -70,8 +70,7 @@ async function checkIfMovieExists(title) {
     const fetchedMovie = await fetchMovieDetails(title)
     const fetchedMovieJson = await fetchedMovie.json()
     const matchCount = await Movie.find({ Title: fetchedMovieJson.Title }).count().exec()
-    if (matchCount > 0) return true
-    return false
+    return matchCount > 0
 }
 
 module.exports = {

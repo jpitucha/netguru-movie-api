@@ -1,10 +1,9 @@
+require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
 const { hasDotEnvVars } = require('./utils/index')
-const routes = require('./routes/index')
+const { router, authUserMiddleware } = require('./routes/index')
 const dbConnectionProvider = require('./db/dbConnectionProvider')
-
-require('dotenv').config()
 
 if (!hasDotEnvVars()) {
     console.log('.env file incorrect, bye')
@@ -17,7 +16,7 @@ dbConnectionProvider.connectToDatabase()
         const app = express()
         app.use(bodyParser.json())
         app.use(bodyParser.urlencoded({ extended: false }))
-        app.use(routes)
+        app.use('/', authUserMiddleware, router)
 
         app.listen(process.env.PORT, () => {
             console.log(`API is running at http://localhost:${process.env.PORT}`)
@@ -28,4 +27,3 @@ dbConnectionProvider.connectToDatabase()
         console.log('error while connecting to db')
         process.exit(1)
     })
-
