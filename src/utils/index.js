@@ -30,7 +30,8 @@ class Utilities {
     }
 
     static async getMoviesByUser(userID) {
-        const movies = await Movie.find({ postedBy: userID }).exec()
+        const movies = await Movie.find({ createdBy: userID }).exec()
+        return movies
         console.log(movies)
     }
 
@@ -38,18 +39,39 @@ class Utilities {
         return fetch(`http://www.omdbapi.com/?apikey=${process.env.OMDB_KEY}&t=${title}`)
     }
 
-    static countMoviesFromCurrentMonth(userID) {
-        //return Movie.find({ createdBy: userID }).where().exec()
-        return Movie.countDocuments({
+    static async checkUserDocCount(userID) {
+        const count = await Movie.countDocuments({
             createdBy: userID,
             createdAt: Utilities.getCurrentMonthAndYear()
         }).exec()
+        if (count >= 5) return false
+        return true
     }
 
     static getCurrentMonthAndYear() {
         const date = new Date()
         return date.getMonth() + '-' + date.getFullYear()
     }
+
+    static async createMovie(title, userDetails, model) {
+        try {
+            const fetchedMovie = await Utilities.fetchMovieDetails(title)
+            const fetchedMovieJson = await fetchedMovie.json()
+            const savedMovie = await model.create({
+                createdBy: userDetails.userId,
+                createdAt: Utilities.getCurrentMonthAndYear(),
+                Title: fetchedMovieJson.Title,
+                Released: fetchedMovieJson.Released,
+                Genre: fetchedMovieJson.Genre,
+                Director: fetchedMovieJson.Director
+            })
+            return savedMovie
+        } catch {
+            return null
+        }
+    }
+
+    static 
 
 }
 
