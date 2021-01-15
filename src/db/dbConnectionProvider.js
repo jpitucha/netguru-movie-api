@@ -1,6 +1,6 @@
-import mongoose from 'mongoose'
+const mongoose = require('mongoose')
 
-export default class dbConnectionProvider {
+class dbConnectionProvider {
 
     static async connectToDatabase() {
         const conn = await mongoose.connect(process.env.DB_URL, {
@@ -14,3 +14,5 @@ export default class dbConnectionProvider {
     }
     
 }
+
+module.exports = dbConnectionProvider

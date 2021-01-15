@@ -1,5 +1,9 @@
 const jwt = require('jsonwebtoken')
+const Movie = require('./../db/schema/movieSchema')
+const fetch = require('node-fetch')
 class Utilities {
+
+    static dbConn
 
     static hasDotEnvVars() {
         if(!process.env.MONGO_INITDB_DATABASE) return false
@@ -22,7 +26,29 @@ class Utilities {
         } catch {
             return null
         }
-        return userDetails
+        return Utilities.dbConn = userDetails
+    }
+
+    static async getMoviesByUser(userID) {
+        const movies = await Movie.find({ postedBy: userID }).exec()
+        console.log(movies)
+    }
+
+    static fetchMovieDetails(title) {
+        return fetch(`http://www.omdbapi.com/?apikey=${process.env.OMDB_KEY}&t=${title}`)
+    }
+
+    static countMoviesFromCurrentMonth(userID) {
+        //return Movie.find({ createdBy: userID }).where().exec()
+        return Movie.countDocuments({
+            createdBy: userID,
+            createdAt: Utilities.getCurrentMonthAndYear()
+        }).exec()
+    }
+
+    static getCurrentMonthAndYear() {
+        const date = new Date()
+        return date.getMonth() + '-' + date.getFullYear()
     }
 
 }
