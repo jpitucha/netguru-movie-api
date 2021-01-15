@@ -53,11 +53,11 @@ class Utilities {
         return date.getMonth() + '-' + date.getFullYear()
     }
 
-    static async createMovie(title, userDetails, model) {
+    static async createMovie(title, userDetails) {
         try {
             const fetchedMovie = await Utilities.fetchMovieDetails(title)
             const fetchedMovieJson = await fetchedMovie.json()
-            const savedMovie = await model.create({
+            const savedMovie = await Movie.create({
                 createdBy: userDetails.userId,
                 createdAt: Utilities.getCurrentMonthAndYear(),
                 Title: fetchedMovieJson.Title,
@@ -71,7 +71,17 @@ class Utilities {
         }
     }
 
-    static 
+    static async checkIfMovieExists(title) {
+        try {
+            const fetchedMovie = await Utilities.fetchMovieDetails(title)
+            const fetchedMovieJson = await fetchedMovie.json()
+            const matchCount = await Movie.find({ Title: fetchedMovieJson.Title }).count().exec()
+            if (matchCount > 0) return true
+            return false
+        } catch {
+            return null
+        }
+    }
 
 }
 

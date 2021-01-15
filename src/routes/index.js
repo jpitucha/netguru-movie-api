@@ -29,8 +29,10 @@ routes.post('/movies', async (req, res) => {
     }
         
     try {
-        // check if movie already exists
-        const savedMovie = await Utilities.createMovie(req.body.title, userDetails, Movie)
+        const existence = await Utilities.checkIfMovieExists(req.body.title)
+        if (existence === null) return res.sendStatus(500)
+        if (existence) return res.json('movie already exists')
+        const savedMovie = await Utilities.createMovie(req.body.title, userDetails)
         if (!savedMovie) return res.sendStatus(400)
         return res.json(savedMovie)
     } catch {
