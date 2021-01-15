@@ -22,18 +22,16 @@ routes.post('/movies', async (req, res) => {
     if (userDetails.role === 'basic') {
         try {
             const countCondition = await isUserWithinUsageLimit(userDetails.userId)
-            console.log(countCondition)
             if (!countCondition) return res.json('user reached limit of saved movies')
         } catch {
-            console.log('limit reached')
             return res.sendStatus(500)
         }
     }
         
     try {
-        const existence = await checkIfMovieExists(req.body.title)
-        if (existence === null) return res.sendStatus(500)
-        if (existence) return res.json('movie already exists')
+        if (await checkIfMovieExists(req.body.title)) {
+            return res.status(500).send('movie already exists')
+        }
         const savedMovie = await createMovie(req.body.title, userDetails)
         return res.json(savedMovie)
     } catch {

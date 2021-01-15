@@ -9,6 +9,9 @@ function hasDotEnvVars() {
     if(!process.env.DB_USERNAME) return false
     if(!process.env.DB_PASSWORD) return false
     if(!process.env.DB_URL) return false
+    if(!process.env.PORT) return false
+    if(!process.env.SECRET) return false
+    if(!process.env.OMDB_KEY) return false
     return true
 }
 
@@ -50,33 +53,25 @@ function getCurrentMonthAndYear() {
 }
 
 async function createMovie(title, userDetails) {
-    try {
-        const fetchedMovie = await fetchMovieDetails(title)
-        const fetchedMovieJson = await fetchedMovie.json()
-        const savedMovie = await Movie.create({
-            createdBy: userDetails.userId,
-            createdAt: getCurrentMonthAndYear(),
-            Title: fetchedMovieJson.Title,
-            Released: fetchedMovieJson.Released,
-            Genre: fetchedMovieJson.Genre,
-            Director: fetchedMovieJson.Director
-        })
-        return savedMovie
-    } catch {
-        throw 'error while creating new movie'
-    }
+    const fetchedMovie = await fetchMovieDetails(title)
+    const fetchedMovieJson = await fetchedMovie.json()
+    const savedMovie = await Movie.create({
+        createdBy: userDetails.userId,
+        createdAt: getCurrentMonthAndYear(),
+        Title: fetchedMovieJson.Title,
+        Released: fetchedMovieJson.Released,
+        Genre: fetchedMovieJson.Genre,
+        Director: fetchedMovieJson.Director
+    })
+    return savedMovie
 }
 
 async function checkIfMovieExists(title) {
-    try {
-        const fetchedMovie = await fetchMovieDetails(title)
-        const fetchedMovieJson = await fetchedMovie.json()
-        const matchCount = await Movie.find({ Title: fetchedMovieJson.Title }).count().exec()
-        if (matchCount > 0) return true
-        return false
-    } catch {
-        return null
-    }
+    const fetchedMovie = await fetchMovieDetails(title)
+    const fetchedMovieJson = await fetchedMovie.json()
+    const matchCount = await Movie.find({ Title: fetchedMovieJson.Title }).count().exec()
+    if (matchCount > 0) return true
+    return false
 }
 
 module.exports = {
