@@ -1,12 +1,12 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-const Utilities = require('./utils/index')
+const { hasDotEnvVars } = require('./utils/index')
 const routes = require('./routes/index')
 const dbConnectionProvider = require('./db/dbConnectionProvider')
 
 require('dotenv').config()
 
-if (!Utilities.hasDotEnvVars()) {
+if (!hasDotEnvVars()) {
     console.log('.env file incorrect, bye')
     process.exit(1)
 }
