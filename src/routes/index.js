@@ -40,6 +40,8 @@ router.post("/movies", async (req, res) => {
       return res.status(403).send(MOVIE_LIMIT_REACHED);
     } else if (err instanceof DuplicateMovieError) {
       return res.status(400).send(MOVIE_EXISTS);
+    } else if (err instanceof MovieNotFoundInOmdbError) {
+      return res.status(404).send(MOVIE_DOESNT_EXISTS_ON_OMDB)
     }
     return res.status(500);
   }

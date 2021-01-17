@@ -23,10 +23,12 @@ async function handleMovieCreationRequest(title, userDetails) {
     const countCondition = await isUserWithinUsageLimit(userDetails.userId);
     if (!countCondition) throw new LimitExceededError();
   }
-  if (await checkIfMovieExists(title)) {
+  // TODO    input validation
+  const fetchedMovie = await fetchMovieDetails(title);
+  if (await checkIfMovieExists(fetchedMovie)) {
     throw new DuplicateMovieError();
   }
-  return createMovie(title, userDetails);
+  return createMovie(fetchedMovie, userDetails);
 }
 
 class AuthorizationSchemeError extends Error {}
@@ -70,8 +72,7 @@ function getCurrentMonthAndYear() {
   return date.getMonth() + "-" + date.getFullYear();
 }
 
-async function createMovie(title, userDetails) {
-  const fetchedMovie = await fetchMovieDetails(title);
+async function createMovie(fetchedMovie, userDetails) {
   const savedMovie = await Movie.create({
     createdBy: userDetails.userId,
     createdAt: getCurrentMonthAndYear(),
@@ -83,8 +84,7 @@ async function createMovie(title, userDetails) {
   return savedMovie;
 }
 
-async function checkIfMovieExists(title) {
-  const fetchedMovie = await fetchMovieDetails(title);
+async function checkIfMovieExists(fetchedMovie) {
   const matchCount = await Movie.find({ Title: fetchedMovie.Title })
     .countDocuments()
     .exec();

@@ -10,6 +10,7 @@ const {
   handleMovieCreationRequest,
 } = require("../logic");
 
+const { MovieNotFoundInOmdbError } = require('./../omdbapi')
 const mockingoose = require("mockingoose").default;
 
 beforeEach(() => {
@@ -62,6 +63,22 @@ test("creates movie upon valid request", async () => {
   );
   expect(createdMovie.Title).toBe("Inferno");
   expect(createdMovie).toEqual(expectedMovieSchema);
+});
+
+test("creates movie upon valid request", async () => {
+  mockingoose(Movie).toReturn((query) => {
+    if (query.getQuery().Title === "moviethatdoesntexist") {
+      return 0;
+    }
+    return 3;
+  }, "countDocuments");
+
+  expect(async () => {
+    await handleMovieCreationRequest(
+      "moviethatdoesntexist",
+      userDetailsForTesting
+    )
+  }).rejects.toThrowError(MovieNotFoundInOmdbError);
 });
 
 test("throws when attempting to create a duplicate movie", async () => {
