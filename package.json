@@ -4,8 +4,9 @@
   "description": "Netguru recruitment task",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/index.js"
+    "test": "jest",
+    "start": "node src/index.js",
+    "prettify": "prettier --write src"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,11 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
     "mongoose": "^5.11.11",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^2.6.1",
+    "prettier": "^2.2.1"
+  },
+  "devDependencies": {
+    "jest": "^26.6.3",
+    "mockingoose": "^2.13.2"
   }
 }
