@@ -1,21 +1,29 @@
 const express = require("express");
+const joi = require('joi')
 const {
   getAuthorizationToken,
   getUserFromToken,
   getMoviesByUser,
   handleMovieCreationRequest,
 } = require("../logic");
-const { MOVIE_LIMIT_REACHED, MOVIE_EXISTS } = require("./../messages");
+const { MOVIE_LIMIT_REACHED, MOVIE_EXISTS, MUST_BE_BEARER } = require("./../messages");
+const { AuthorizationSchemeError, AuthenticationError } = require('./../logic')
 
 const router = express.Router();
 
-// TODO handle errors
 function authUserMiddleware(req, res, next) {
-  const token = getAuthorizationToken(req.headers["Authorization"]);
-  const userDetails = getUserFromToken(token);
-  if (!userDetails) return res.sendStatus(400);
-  req.userDetails = userDetails;
-  return next();
+  try {
+    const token = getAuthorizationToken(req.headers["authorization"]);
+    const userDetails = getUserFromToken(token);
+    req.userDetails = userDetails;
+    return next();
+  } catch (err) {
+    if (err instanceof AuthorizationSchemeError) {
+      return res.status(400).send(MUST_BE_BEARER)
+    } else if (err instanceof AuthenticationError) {
+      return res.sendStatus(401);
+    }
+  }
 }
 
 router.get("/movies", async (req, res) => {
@@ -28,8 +36,16 @@ router.get("/movies", async (req, res) => {
   }
 });
 
+const moviePostRequestSchema = joi.object({
+  title: joi.string().max(100).required()
+});
+
 router.post("/movies", async (req, res) => {
   try {
+    const validationStatus = moviePostRequestSchema.validate(req.body);
+    if (validationStatus.error) {
+      return res.status(400).send(validationStatus.error);
+    }
     const createdMovie = await handleMovieCreationRequest(
       req.body.title,
       req.userDetails
