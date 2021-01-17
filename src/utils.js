@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const Movie = require("./db/schema/movieSchema");
-const fetch = require("node-fetch");
+const { fetchMovieDetails } = require("./omdbapi");
 
 function hasDotEnvVars() {
   if (!process.env.MONGO_INITDB_DATABASE) return false;
@@ -38,12 +38,6 @@ async function getMoviesByUser(userID) {
   return movies;
 }
 
-function fetchMovieDetails(title) {
-  return fetch(
-    `http://www.omdbapi.com/?apikey=${process.env.OMDB_KEY}&t=${title}`
-  );
-}
-
 async function isUserWithinUsageLimit(userID) {
   const count = await Movie.countDocuments({
     createdBy: userID,
@@ -59,25 +53,30 @@ function getCurrentMonthAndYear() {
 
 async function createMovie(title, userDetails) {
   const fetchedMovie = await fetchMovieDetails(title);
-  const fetchedMovieJson = await fetchedMovie.json();
   const savedMovie = await Movie.create({
     createdBy: userDetails.userId,
     createdAt: getCurrentMonthAndYear(),
-    Title: fetchedMovieJson.Title,
-    Released: fetchedMovieJson.Released,
-    Genre: fetchedMovieJson.Genre,
-    Director: fetchedMovieJson.Director,
+    Title: fetchedMovie.Title,
+    Released: fetchedMovie.Released,
+    Genre: fetchedMovie.Genre,
+    Director: fetchedMovie.Director,
   });
   return savedMovie;
 }
 
 async function checkIfMovieExists(title) {
   const fetchedMovie = await fetchMovieDetails(title);
-  const fetchedMovieJson = await fetchedMovie.json();
-  const matchCount = await Movie.find({ Title: fetchedMovieJson.Title })
+  const matchCount = await Movie.find({ Title: fetchedMovie.Title })
     .countDocuments()
     .exec();
   return matchCount > 0;
+}
+
+async function test() {
+
+  const fetchedMovieDetails = await fetchMovieDetails("dfghj");
+  console.log(fetchedMovieDetails);
+  return fetchedMovieDetails;
 }
 
 module.exports = {
@@ -90,4 +89,5 @@ module.exports = {
   createMovie,
   checkIfMovieExists,
   getAuthorizationToken,
+  test
 };
