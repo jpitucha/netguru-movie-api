@@ -4,9 +4,10 @@ const bodyParser = require("body-parser");
 const { hasDotEnvVars } = require("./utils/index");
 const { router, authUserMiddleware } = require("./routes/index");
 const dbConnectionProvider = require("./db/dbConnectionProvider");
+const { INCORRECT_ENV_FILE, DB_CONNECTION_ERR } = require("./messages");
 
 if (!hasDotEnvVars()) {
-  console.log(".env file incorrect, bye");
+  console.log(INCORRECT_ENV_FILE);
   process.exit(1);
 }
 
@@ -23,6 +24,6 @@ dbConnectionProvider
     });
   })
   .catch(() => {
-    console.log("error while connecting to db");
+    console.log(DB_CONNECTION_ERR);
     process.exit(1);
   });

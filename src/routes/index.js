@@ -3,13 +3,13 @@ const {
   getAuthorizationToken,
   getUserFromToken,
   getMoviesByUser,
-  isUserWithinUsageLimit,
-  checkIfMovieExists,
-  createMovie,
-} = require("../utils");
+  handleMovieCreationRequest,
+} = require("../logic");
+const { MOVIE_LIMIT_REACHED, MOVIE_EXISTS } = require("./../messages");
 
 const router = express.Router();
 
+// TODO handle errors
 function authUserMiddleware(req, res, next) {
   const token = getAuthorizationToken(req.headers["Authorization"]);
   const userDetails = getUserFromToken(token);
@@ -30,21 +30,18 @@ router.get("/movies", async (req, res) => {
 
 router.post("/movies", async (req, res) => {
   try {
-    if (req.userDetails.role === "basic") {
-      const countCondition = await isUserWithinUsageLimit(
-        req.userDetails.userId
-      );
-      if (!countCondition)
-        return res.json("user reached limit of saved movies");
-    }
-    if (await checkIfMovieExists(req.body.title)) {
-      return res.status(500).send("movie already exists");
-    }
-    const savedMovie = await createMovie(req.body.title, req.userDetails);
-    return res.json(savedMovie);
+    const createdMovie = await handleMovieCreationRequest(
+      req.body.title,
+      req.userDetails
+    );
+    return res.json(createdMovie);
   } catch (err) {
-    console.log(err);
-    return res.sendStatus(500);
+    if (err instanceof LimitExceededError) {
+      return res.status(403).send(MOVIE_LIMIT_REACHED);
+    } else if (err instanceof DuplicateMovieError) {
+      return res.status(400).send(MOVIE_EXISTS);
+    }
+    return res.status(500);
   }
 });
 

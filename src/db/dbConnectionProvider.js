@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { DB_CONNECTION_ERR } = require("../messages");
 
 class dbConnectionProvider {
   static async connectToDatabase() {
@@ -8,7 +9,7 @@ class dbConnectionProvider {
       useFindAndModify: true,
       useCreateIndex: true,
     });
-    if (!conn) throw "error occured while connecting to db";
+    if (!conn) throw DB_CONNECTION_ERR;
     return conn;
   }
 }

@@ -15,6 +15,20 @@ function hasDotEnvVars() {
   return true;
 }
 
+class DuplicateMovieError extends Error {}
+class LimitExceededError extends Error {}
+
+async function handleMovieCreationRequest(title, userDetails) {
+  if (userDetails.role === "basic") {
+    const countCondition = await isUserWithinUsageLimit(userDetails.userId);
+    if (!countCondition) throw new LimitExceededError();
+  }
+  if (await checkIfMovieExists(title)) {
+    throw new DuplicateMovieError();
+  }
+  return createMovie(title, userDetails);
+}
+
 class AuthorizationSchemeError extends Error {}
 class AuthenticationError extends Error {}
 
@@ -30,7 +44,12 @@ function getAuthorizationToken(authorizationHeader) {
 }
 
 function getUserFromToken(token) {
-  return jwt.verify(token, process.env.SECRET);
+  try {
+    const userDetails = jwt.verify(token, process.env.SECRET);
+    return userDetails;
+  } catch (err) {
+    throw new AuthenticationError();
+  }
 }
 
 async function getMoviesByUser(userID) {
@@ -72,22 +91,16 @@ async function checkIfMovieExists(title) {
   return matchCount > 0;
 }
 
-async function test() {
-
-  const fetchedMovieDetails = await fetchMovieDetails("dfghj");
-  console.log(fetchedMovieDetails);
-  return fetchedMovieDetails;
-}
-
 module.exports = {
   hasDotEnvVars,
   getUserFromToken,
   getMoviesByUser,
   fetchMovieDetails,
-  isUserWithinUsageLimit,
   getCurrentMonthAndYear,
-  createMovie,
-  checkIfMovieExists,
   getAuthorizationToken,
-  test
+  handleMovieCreationRequest,
+  DuplicateMovieError,
+  LimitExceededError,
+  AuthorizationSchemeError,
+  AuthenticationError,
 };
