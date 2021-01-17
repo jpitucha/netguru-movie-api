@@ -1,4 +1,4 @@
-async function fetchMovieDetails(title) {
+async function fetchMovieDetails() {
   return {
     title: "Inferno",
     released: "28 Oct 2016",

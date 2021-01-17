@@ -10,8 +10,15 @@ const {
   MOVIE_LIMIT_REACHED,
   MOVIE_EXISTS,
   MUST_BE_BEARER,
+  MOVIE_DOES_NOT_EXIST_ON_OMDB,
 } = require("./../messages");
-const { AuthorizationSchemeError, AuthenticationError } = require("./../logic");
+const {
+  AuthorizationSchemeError,
+  LimitExceededError,
+  DuplicateMovieError,
+  AuthenticationError,
+} = require("./../logic");
+const { MovieNotFoundInOmdbError } = require("./../omdbapi");
 
 const router = express.Router();
 
@@ -61,7 +68,7 @@ router.post("/movies", async (req, res) => {
     } else if (err instanceof DuplicateMovieError) {
       return res.status(400).send(MOVIE_EXISTS);
     } else if (err instanceof MovieNotFoundInOmdbError) {
-      return res.status(404).send(MOVIE_DOESNT_EXISTS_ON_OMDB);
+      return res.status(404).send(MOVIE_DOES_NOT_EXIST_ON_OMDB);
     }
     return res.status(500);
   }
