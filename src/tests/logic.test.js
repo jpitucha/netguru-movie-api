@@ -10,7 +10,7 @@ const {
   handleMovieCreationRequest,
 } = require("../logic");
 
-const { MovieNotFoundInOmdbError } = require('./../omdbapi')
+const { MovieNotFoundInOmdbError } = require("./../omdbapi");
 const mockingoose = require("mockingoose").default;
 
 beforeEach(() => {
@@ -28,13 +28,13 @@ test("extracts token from authorization header", () => {
   );
 });
 
-test("fails if authorization scheme is not Bearer", () => {
+test("throws if authorization scheme is not Bearer", () => {
   expect(() => getAuthorizationToken("Basic xdcfgvhbjdrtfghbj")).toThrowError(
     AuthorizationSchemeError
   );
 });
 
-test("fails if authorization scheme is not valid", () => {
+test("throws if authorization header value is not valid", () => {
   expect(() => getAuthorizationToken("setyihuytfojij")).toThrowError(
     AuthorizationSchemeError
   );
@@ -44,15 +44,15 @@ const expectedMovieSchema = expect.objectContaining({
   _id: expect.any(Object),
   createdBy: expect.any(String),
   createdAt: expect.any(String),
-  Title: expect.any(String),
-  Released: expect.any(String),
-  Genre: expect.any(String),
-  Director: expect.any(String),
+  title: expect.any(String),
+  released: expect.any(String),
+  genre: expect.any(Array),
+  director: expect.any(String),
 });
 
 test("creates movie upon valid request", async () => {
   mockingoose(Movie).toReturn((query) => {
-    if (query.getQuery().Title === "Inferno") {
+    if (query.getQuery().title === "Inferno") {
       return 0;
     }
     return 3;
@@ -61,13 +61,13 @@ test("creates movie upon valid request", async () => {
     "Inferno",
     userDetailsForTesting
   );
-  expect(createdMovie.Title).toBe("Inferno");
+  expect(createdMovie.title).toBe("Inferno");
   expect(createdMovie).toEqual(expectedMovieSchema);
 });
 
 test("creates movie upon valid request", async () => {
   mockingoose(Movie).toReturn((query) => {
-    if (query.getQuery().Title === "moviethatdoesntexist") {
+    if (query.getQuery().title === "moviethatdoesntexist") {
       return 0;
     }
     return 3;
@@ -77,13 +77,13 @@ test("creates movie upon valid request", async () => {
     await handleMovieCreationRequest(
       "moviethatdoesntexist",
       userDetailsForTesting
-    )
+    );
   }).rejects.toThrowError(MovieNotFoundInOmdbError);
 });
 
 test("throws when attempting to create a duplicate movie", async () => {
   mockingoose(Movie).toReturn((query) => {
-    if (query.getQuery().Title === "Inferno") {
+    if (query.getQuery().title === "Inferno") {
       return 1;
     }
     return 3;
@@ -95,7 +95,7 @@ test("throws when attempting to create a duplicate movie", async () => {
 
 test("throws when user has exceeded quota", async () => {
   mockingoose(Movie).toReturn((query) => {
-    if (query.getQuery().Title === "Inferno") {
+    if (query.getQuery().title === "Inferno") {
       return 0;
     }
     return 5;

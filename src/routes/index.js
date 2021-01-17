@@ -1,13 +1,17 @@
 const express = require("express");
-const joi = require('joi')
+const joi = require("joi");
 const {
   getAuthorizationToken,
   getUserFromToken,
   getMoviesByUser,
   handleMovieCreationRequest,
 } = require("../logic");
-const { MOVIE_LIMIT_REACHED, MOVIE_EXISTS, MUST_BE_BEARER } = require("./../messages");
-const { AuthorizationSchemeError, AuthenticationError } = require('./../logic')
+const {
+  MOVIE_LIMIT_REACHED,
+  MOVIE_EXISTS,
+  MUST_BE_BEARER,
+} = require("./../messages");
+const { AuthorizationSchemeError, AuthenticationError } = require("./../logic");
 
 const router = express.Router();
 
@@ -19,7 +23,7 @@ function authUserMiddleware(req, res, next) {
     return next();
   } catch (err) {
     if (err instanceof AuthorizationSchemeError) {
-      return res.status(400).send(MUST_BE_BEARER)
+      return res.status(400).send(MUST_BE_BEARER);
     } else if (err instanceof AuthenticationError) {
       return res.sendStatus(401);
     }
@@ -37,7 +41,7 @@ router.get("/movies", async (req, res) => {
 });
 
 const moviePostRequestSchema = joi.object({
-  title: joi.string().max(100).required()
+  title: joi.string().max(100).required(),
 });
 
 router.post("/movies", async (req, res) => {
@@ -50,14 +54,14 @@ router.post("/movies", async (req, res) => {
       req.body.title,
       req.userDetails
     );
-    return res.json(createdMovie);
+    return res.status(201).json(createdMovie);
   } catch (err) {
     if (err instanceof LimitExceededError) {
       return res.status(403).send(MOVIE_LIMIT_REACHED);
     } else if (err instanceof DuplicateMovieError) {
       return res.status(400).send(MOVIE_EXISTS);
     } else if (err instanceof MovieNotFoundInOmdbError) {
-      return res.status(404).send(MOVIE_DOESNT_EXISTS_ON_OMDB)
+      return res.status(404).send(MOVIE_DOESNT_EXISTS_ON_OMDB);
     }
     return res.status(500);
   }

@@ -5,10 +5,17 @@ class MovieNotFoundInOmdbError extends Error {}
 
 function fetchMovieDetails(title) {
   const hostname = `http://www.omdbapi.com/?apikey=${process.env.OMDB_KEY}&t=${title}`;
-  return fetch(hostname).then((resp) => resp.json()).then((json) => {
-    if (json.Error) throw MovieNotFoundInOmdbError();
-    return json;
-  });
+  return fetch(hostname)
+    .then((resp) => resp.json())
+    .then((json) => {
+      if (json.Error) throw MovieNotFoundInOmdbError();
+      return {
+        title: json.Title,
+        released: json.Released,
+        genre: json.Genre.split(", "),
+        director: json.Director,
+      };
+    });
 }
 
 module.exports = { fetchMovieDetails, MovieNotFoundInOmdbError };

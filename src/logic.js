@@ -23,7 +23,6 @@ async function handleMovieCreationRequest(title, userDetails) {
     const countCondition = await isUserWithinUsageLimit(userDetails.userId);
     if (!countCondition) throw new LimitExceededError();
   }
-  // TODO    input validation
   const fetchedMovie = await fetchMovieDetails(title);
   if (await checkIfMovieExists(fetchedMovie)) {
     throw new DuplicateMovieError();
@@ -76,16 +75,13 @@ async function createMovie(fetchedMovie, userDetails) {
   const savedMovie = await Movie.create({
     createdBy: userDetails.userId,
     createdAt: getCurrentMonthAndYear(),
-    Title: fetchedMovie.Title,
-    Released: fetchedMovie.Released,
-    Genre: fetchedMovie.Genre,
-    Director: fetchedMovie.Director,
+    ...fetchedMovie,
   });
   return savedMovie;
 }
 
 async function checkIfMovieExists(fetchedMovie) {
-  const matchCount = await Movie.find({ Title: fetchedMovie.Title })
+  const matchCount = await Movie.find({ title: fetchedMovie.title })
     .countDocuments()
     .exec();
   return matchCount > 0;

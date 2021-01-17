@@ -5,6 +5,10 @@ const { hasDotEnvVars } = require("./logic");
 const { router, authUserMiddleware } = require("./routes/index");
 const dbConnectionProvider = require("./db/dbConnectionProvider");
 const { INCORRECT_ENV_FILE, DB_CONNECTION_ERR } = require("./messages");
+const swaggerUi = require("swagger-ui-express");
+const YAML = require("yamljs");
+
+const swaggerDocument = YAML.load("./src/swagger.yaml");
 
 if (!hasDotEnvVars()) {
   console.log(INCORRECT_ENV_FILE);
@@ -17,9 +21,14 @@ dbConnectionProvider
     const app = express();
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(
+      "/api-docs",
+      swaggerUi.serve,
+      swaggerUi.setup(swaggerDocument, { explorer: true })
+    );
     app.use("/", authUserMiddleware, router);
 
-    app.listen(process.env.PORT, () => {
+    app.listen(process.env.PORT, "0.0.0.0", () => {
       console.log(`API is running at http://localhost:${process.env.PORT}`);
     });
   })
