@@ -23,7 +23,7 @@ paths:
       tags:
         - movie
       requestBody:
-        description: Optional description in *Markdown*
+        description: You have to set `title` in JSON format
         required: true
         content:
           application/json:
