@@ -8,7 +8,7 @@ function fetchMovieDetails(title) {
   return fetch(hostname)
     .then((resp) => resp.json())
     .then((json) => {
-      if (json.Error) throw MovieNotFoundInOmdbError();
+      if (json.Error) throw new MovieNotFoundInOmdbError();
       return {
         title: json.Title,
         released: json.Released,
