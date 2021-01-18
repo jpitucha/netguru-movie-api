@@ -11,6 +11,7 @@ const {
   MOVIE_EXISTS,
   MUST_BE_BEARER,
   MOVIE_DOES_NOT_EXIST_ON_OMDB,
+  INVALID_FETCH,
 } = require("./../messages");
 const {
   AuthorizationSchemeError,
@@ -19,6 +20,8 @@ const {
   AuthenticationError,
 } = require("./../logic");
 const { MovieNotFoundInOmdbError } = require("./../omdbapi");
+//const { ValidationError } = require("joi");
+const { ValidationError } = require("mongoose").Error;
 
 const router = express.Router();
 
@@ -69,6 +72,8 @@ router.post("/movies", async (req, res) => {
       return res.status(400).send(MOVIE_EXISTS);
     } else if (err instanceof MovieNotFoundInOmdbError) {
       return res.status(404).send(MOVIE_DOES_NOT_EXIST_ON_OMDB);
+    } else if (err instanceof ValidationError) {
+      return res.status(500).send(INVALID_FETCH);
     }
     return res.status(500);
   }
