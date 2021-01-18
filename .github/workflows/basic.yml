@@ -14,13 +14,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-        env:
-          BASIC_USER_MOVIE_LIMIT: 5
-
       - name: 'Install dependencies'
         run: npm i
       
       - name: 'Run tests'
+        env:
+          BASIC_USER_MOVIE_LIMIT: 5
         run: npm run test
         
   lint:
