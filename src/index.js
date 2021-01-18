@@ -4,7 +4,11 @@ const bodyParser = require("body-parser");
 const { hasDotEnvVars } = require("./logic");
 const { router, authUserMiddleware } = require("./routes/index");
 const dbConnectionProvider = require("./db/dbConnectionProvider");
-const { INCORRECT_ENV_FILE, DB_CONNECTION_ERR } = require("./messages");
+const {
+  INCORRECT_ENV_FILE,
+  DB_CONNECTION_ERR,
+  APP_RUNNING,
+} = require("./messages");
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
 
@@ -29,7 +33,7 @@ dbConnectionProvider
     app.use("/", authUserMiddleware, router);
 
     app.listen(process.env.PORT, "0.0.0.0", () => {
-      console.log(`API is running at http://localhost:${process.env.PORT}`);
+      console.log(APP_RUNNING);
     });
   })
   .catch(() => {

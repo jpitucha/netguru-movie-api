@@ -4,7 +4,7 @@
   "description": "Netguru recruitment task",
   "main": "src/index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --setupFiles dotenv/config",
     "lint": "eslint src",
     "start": "node src/index.js",
     "prettify": "prettier --write src"

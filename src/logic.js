@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const Movie = require("./db/schema/movieSchema");
 const { fetchMovieDetails } = require("./omdbapi");
+const { BASIC_USER_ROLE, AUTH_TYPE } = require("./messages");
 
 function hasDotEnvVars() {
   if (!process.env.MONGO_INITDB_DATABASE) return false;
@@ -19,7 +20,7 @@ class DuplicateMovieError extends Error {}
 class LimitExceededError extends Error {}
 
 async function handleMovieCreationRequest(title, userDetails) {
-  if (userDetails.role === "basic") {
+  if (userDetails.role === BASIC_USER_ROLE) {
     const countCondition = await isUserWithinUsageLimit(userDetails.userId);
     if (!countCondition) throw new LimitExceededError();
   }
@@ -38,7 +39,7 @@ function getAuthorizationToken(authorizationHeader) {
     throw new AuthorizationSchemeError();
   }
   const [scheme, token] = authorizationHeader.split(" ");
-  if (scheme !== "Bearer") {
+  if (scheme !== AUTH_TYPE) {
     throw new AuthorizationSchemeError();
   }
   return token;
@@ -63,7 +64,7 @@ async function isUserWithinUsageLimit(userID) {
     createdBy: userID,
     createdAt: getCurrentMonthAndYear(),
   }).exec();
-  return count < 5;
+  return count < process.env.BASIC_USER_MOVIE_LIMIT;
 }
 
 function getCurrentMonthAndYear() {

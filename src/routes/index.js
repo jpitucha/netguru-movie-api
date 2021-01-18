@@ -12,6 +12,7 @@ const {
   MUST_BE_BEARER,
   MOVIE_DOES_NOT_EXIST_ON_OMDB,
   INVALID_FETCH,
+  AUTH_HEADER,
 } = require("./../messages");
 const {
   AuthorizationSchemeError,
@@ -27,7 +28,7 @@ const router = express.Router();
 
 function authUserMiddleware(req, res, next) {
   try {
-    const token = getAuthorizationToken(req.headers["authorization"]);
+    const token = getAuthorizationToken(req.headers[AUTH_HEADER]);
     const userDetails = getUserFromToken(token);
     req.userDetails = userDetails;
     return next();
