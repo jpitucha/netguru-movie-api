@@ -11,8 +11,9 @@ function hasDotEnvVars() {
   if (!process.env.DB_PASSWORD) return false;
   if (!process.env.DB_URL) return false;
   if (!process.env.PORT) return false;
-  if (!process.env.SECRET) return false;
+  if (!process.env.JWT_SECRET) return false;
   if (!process.env.OMDB_KEY) return false;
+  if (!process.env.BASIC_USER_MOVIE_LIMIT) return false;
   return true;
 }
 
@@ -47,7 +48,7 @@ function getAuthorizationToken(authorizationHeader) {
 
 function getUserFromToken(token) {
   try {
-    const userDetails = jwt.verify(token, process.env.SECRET);
+    const userDetails = jwt.verify(token, process.env.JWT_SECRET);
     return userDetails;
   } catch (err) {
     throw new AuthenticationError();
