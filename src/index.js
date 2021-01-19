@@ -1,11 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
-const {
-  hasDotEnvVars,
-  getAuthorizationToken,
-  getUserFromToken,
-} = require("./auth");
+const { getAuthorizationToken, getUserFromToken } = require("./auth");
 const { router } = require("./routes/movies/index");
 const dbConnectionProvider = require("./db/dbConnectionProvider");
 const {
