@@ -1,11 +1,17 @@
 const express = require("express");
 const joi = require("joi");
 const {
+  AuthorizationSchemeError,
+  AuthenticationError,
   getAuthorizationToken,
   getUserFromToken,
+} = require("../../logic");
+const {
+  LimitExceededError,
+  DuplicateMovieError,
   getMoviesByUser,
   handleMovieCreationRequest,
-} = require("../../logic");
+} = require("./../movies/mongoUtils");
 const {
   MOVIE_LIMIT_REACHED,
   MOVIE_EXISTS,
@@ -14,12 +20,6 @@ const {
   INVALID_FETCH,
   AUTH_HEADER,
 } = require("../../messages");
-const {
-  AuthorizationSchemeError,
-  LimitExceededError,
-  DuplicateMovieError,
-  AuthenticationError,
-} = require("../../logic");
 const { MovieNotFoundInOmdbError } = require("../../omdbapi");
 const { ValidationError } = require("mongoose").Error;
 const logger = require("./../../logger");

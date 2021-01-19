@@ -2,13 +2,13 @@ jest.mock("./../omdbapi");
 
 const Movie = require("../db/schema/movieSchema");
 
+const { getAuthorizationToken, AuthorizationSchemeError } = require("../logic");
+
 const {
-  getAuthorizationToken,
   DuplicateMovieError,
   LimitExceededError,
-  AuthorizationSchemeError,
   handleMovieCreationRequest,
-} = require("../logic");
+} = require("../routes/movies/mongoUtils");
 
 const { MovieNotFoundInOmdbError } = require("./../omdbapi");
 const mockingoose = require("mockingoose").default;
