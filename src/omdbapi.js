@@ -12,7 +12,7 @@ function fetchMovieDetails(title) {
       return {
         title: json.Title,
         released: json.Released,
-        genre: json.Genre.split(", "),
+        genre: json.Genre,
         director: json.Director,
       };
     });

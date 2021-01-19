@@ -46,7 +46,7 @@ const expectedMovieSchema = expect.objectContaining({
   createdAt: expect.any(String),
   title: expect.any(String),
   released: expect.any(String),
-  genre: expect.any(Array),
+  genre: expect.any(String),
   director: expect.any(String),
 });
 

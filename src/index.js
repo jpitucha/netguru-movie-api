@@ -8,6 +8,8 @@ const {
   INCORRECT_ENV_FILE,
   DB_CONNECTION_ERR,
   APP_RUNNING,
+  AUTH_HEADER,
+  MUST_BE_BEARER,
 } = require("./messages");
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
@@ -34,6 +36,9 @@ if (!hasDotEnvVars()) {
   process.exit(1);
 }
 
+class AuthorizationSchemeError extends Error {}
+class AuthenticationError extends Error {}
+
 function authUserMiddleware(req, res, next) {
   try {
     const token = getAuthorizationToken(req.headers[AUTH_HEADER]);
@@ -41,6 +46,7 @@ function authUserMiddleware(req, res, next) {
     req.userDetails = userDetails;
     return next();
   } catch (err) {
+    console.log(err);
     if (err instanceof AuthorizationSchemeError) {
       return res.status(400).send(MUST_BE_BEARER);
     } else if (err instanceof AuthenticationError) {
