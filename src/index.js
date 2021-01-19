@@ -11,11 +11,12 @@ const {
 } = require("./messages");
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
+const logger = require("./logger");
 
 const swaggerDocument = YAML.load("./src/swagger.yaml");
 
 if (!hasDotEnvVars()) {
-  console.log(INCORRECT_ENV_FILE);
+  logger.log(INCORRECT_ENV_FILE);
   process.exit(1);
 }
 
@@ -33,10 +34,10 @@ dbConnectionProvider
     app.use("/", authUserMiddleware, router);
 
     app.listen(process.env.PORT, "0.0.0.0", () => {
-      console.log(APP_RUNNING);
+      logger.log(APP_RUNNING);
     });
   })
   .catch(() => {
-    console.log(DB_CONNECTION_ERR);
+    logger.log(DB_CONNECTION_ERR);
     process.exit(1);
   });

@@ -21,8 +21,8 @@ const {
   AuthenticationError,
 } = require("../../logic");
 const { MovieNotFoundInOmdbError } = require("../../omdbapi");
-//const { ValidationError } = require("joi");
 const { ValidationError } = require("mongoose").Error;
+const logger = require("./../../logger");
 
 const router = express.Router();
 
@@ -46,7 +46,7 @@ router.get("/movies", async (req, res) => {
     const movieList = await getMoviesByUser(req.userDetails.userId);
     return res.json(movieList);
   } catch (err) {
-    console.log(err);
+    logger.log(err);
     return res.sendStatus(500);
   }
 });

@@ -32,6 +32,7 @@
     "node-fetch": "^2.6.1",
     "prettier": "^2.2.1",
     "swagger-ui-express": "^4.1.6",
+    "winston": "^3.3.3",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
