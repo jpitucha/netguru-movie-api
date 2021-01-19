@@ -5,7 +5,7 @@ const {
   getUserFromToken,
   getMoviesByUser,
   handleMovieCreationRequest,
-} = require("../logic");
+} = require("../../logic");
 const {
   MOVIE_LIMIT_REACHED,
   MOVIE_EXISTS,
@@ -13,14 +13,14 @@ const {
   MOVIE_DOES_NOT_EXIST_ON_OMDB,
   INVALID_FETCH,
   AUTH_HEADER,
-} = require("./../messages");
+} = require("../../messages");
 const {
   AuthorizationSchemeError,
   LimitExceededError,
   DuplicateMovieError,
   AuthenticationError,
-} = require("./../logic");
-const { MovieNotFoundInOmdbError } = require("./../omdbapi");
+} = require("../../logic");
+const { MovieNotFoundInOmdbError } = require("../../omdbapi");
 //const { ValidationError } = require("joi");
 const { ValidationError } = require("mongoose").Error;
 
@@ -69,11 +69,14 @@ router.post("/movies", async (req, res) => {
   } catch (err) {
     if (err instanceof LimitExceededError) {
       return res.status(403).send(MOVIE_LIMIT_REACHED);
-    } else if (err instanceof DuplicateMovieError) {
+    }
+    if (err instanceof DuplicateMovieError) {
       return res.status(400).send(MOVIE_EXISTS);
-    } else if (err instanceof MovieNotFoundInOmdbError) {
+    }
+    if (err instanceof MovieNotFoundInOmdbError) {
       return res.status(404).send(MOVIE_DOES_NOT_EXIST_ON_OMDB);
-    } else if (err instanceof ValidationError) {
+    }
+    if (err instanceof ValidationError) {
       return res.status(500).send(INVALID_FETCH);
     }
     return res.status(500);
