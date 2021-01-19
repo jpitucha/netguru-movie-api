@@ -46,7 +46,7 @@ router.get("/movies", async (req, res) => {
     const movieList = await getMoviesByUser(req.userDetails.userId);
     return res.json(movieList);
   } catch (err) {
-    logger.log(err);
+    logger.error(err);
     return res.sendStatus(500);
   }
 });

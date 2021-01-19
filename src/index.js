@@ -16,7 +16,7 @@ const logger = require("./logger");
 const swaggerDocument = YAML.load("./src/swagger.yaml");
 
 if (!hasDotEnvVars()) {
-  logger.log(INCORRECT_ENV_FILE);
+  logger.error(INCORRECT_ENV_FILE);
   process.exit(1);
 }
 
@@ -34,10 +34,10 @@ dbConnectionProvider
     app.use("/", authUserMiddleware, router);
 
     app.listen(process.env.PORT, "0.0.0.0", () => {
-      logger.log(APP_RUNNING);
+      logger.info(APP_RUNNING);
     });
   })
   .catch(() => {
-    logger.log(DB_CONNECTION_ERR);
+    logger.error(DB_CONNECTION_ERR);
     process.exit(1);
   });
