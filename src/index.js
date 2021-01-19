@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const { getAuthorizationToken, getUserFromToken } = require("./auth");
 const { router } = require("./routes/movies/index");
 const dbConnectionProvider = require("./db/dbConnectionProvider");
+const morgan = require("morgan");
 const {
   INCORRECT_ENV_FILE,
   DB_CONNECTION_ERR,
@@ -61,6 +62,7 @@ dbConnectionProvider
     const app = express();
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(morgan("combined", { stream: logger.stream }));
     app.use(
       "/api-docs",
       swaggerUi.serve,

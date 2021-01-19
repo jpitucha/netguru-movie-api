@@ -29,7 +29,7 @@ router.get("/movies", async (req, res) => {
 });
 
 const moviePostRequestSchema = joi.object({
-  title: joi.string().max(100).required(),
+  title: joi.string().trim().max(200).required(),
 });
 
 router.post("/movies", async (req, res) => {
