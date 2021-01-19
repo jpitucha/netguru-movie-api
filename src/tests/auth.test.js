@@ -2,7 +2,7 @@ jest.mock("./../omdbapi");
 
 const Movie = require("../db/schema/movieSchema");
 
-const { getAuthorizationToken, AuthorizationSchemeError } = require("../logic");
+const { getAuthorizationToken, AuthorizationSchemeError } = require("../auth");
 
 const {
   DuplicateMovieError,
@@ -10,7 +10,7 @@ const {
   handleMovieCreationRequest,
 } = require("../routes/movies/mongoUtils");
 
-const { MovieNotFoundInOmdbError } = require("./../omdbapi");
+const { MovieNotFoundInOmdbError } = require("../omdbapi");
 const mockingoose = require("mockingoose").default;
 
 beforeEach(() => {

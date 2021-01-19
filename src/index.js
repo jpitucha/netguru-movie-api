@@ -1,8 +1,8 @@
 require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
-const { hasDotEnvVars } = require("./logic");
-const { router, authUserMiddleware } = require("./routes/movies/index");
+const { hasDotEnvVars, authUserMiddleware } = require("./auth");
+const { router } = require("./routes/movies/index");
 const dbConnectionProvider = require("./db/dbConnectionProvider");
 const {
   INCORRECT_ENV_FILE,

@@ -1,12 +1,6 @@
 const express = require("express");
 const joi = require("joi");
 const {
-  AuthorizationSchemeError,
-  AuthenticationError,
-  getAuthorizationToken,
-  getUserFromToken,
-} = require("../../logic");
-const {
   LimitExceededError,
   DuplicateMovieError,
   getMoviesByUser,
@@ -15,31 +9,14 @@ const {
 const {
   MOVIE_LIMIT_REACHED,
   MOVIE_EXISTS,
-  MUST_BE_BEARER,
   MOVIE_DOES_NOT_EXIST_ON_OMDB,
   INVALID_FETCH,
-  AUTH_HEADER,
 } = require("../../messages");
 const { MovieNotFoundInOmdbError } = require("../../omdbapi");
 const { ValidationError } = require("mongoose").Error;
 const logger = require("./../../logger");
 
 const router = express.Router();
-
-function authUserMiddleware(req, res, next) {
-  try {
-    const token = getAuthorizationToken(req.headers[AUTH_HEADER]);
-    const userDetails = getUserFromToken(token);
-    req.userDetails = userDetails;
-    return next();
-  } catch (err) {
-    if (err instanceof AuthorizationSchemeError) {
-      return res.status(400).send(MUST_BE_BEARER);
-    } else if (err instanceof AuthenticationError) {
-      return res.sendStatus(401);
-    }
-  }
-}
 
 router.get("/movies", async (req, res) => {
   try {
@@ -83,4 +60,4 @@ router.post("/movies", async (req, res) => {
   }
 });
 
-module.exports = { router, authUserMiddleware };
+module.exports = { router };

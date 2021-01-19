@@ -1,5 +1,20 @@
 const jwt = require("jsonwebtoken");
-const { AUTH_TYPE } = require("./messages");
+const { AUTH_TYPE, AUTH_HEADER, MUST_BE_BEARER } = require("./messages");
+
+function authUserMiddleware(req, res, next) {
+  try {
+    const token = getAuthorizationToken(req.headers[AUTH_HEADER]);
+    const userDetails = getUserFromToken(token);
+    req.userDetails = userDetails;
+    return next();
+  } catch (err) {
+    if (err instanceof AuthorizationSchemeError) {
+      return res.status(400).send(MUST_BE_BEARER);
+    } else if (err instanceof AuthenticationError) {
+      return res.sendStatus(401);
+    }
+  }
+}
 
 function hasDotEnvVars() {
   if (!process.env.MONGO_INITDB_DATABASE) return false;
@@ -39,6 +54,7 @@ function getUserFromToken(token) {
 }
 
 module.exports = {
+  authUserMiddleware,
   hasDotEnvVars,
   getUserFromToken,
   getAuthorizationToken,
