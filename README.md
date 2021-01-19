@@ -54,6 +54,8 @@ While implementing this project I used among the others this libraries:
 - Node-fetch
 - Prettier
 - Swagger
+- Winston
+- Morgan
 
 # Something is wrong?
 
