@@ -1,6 +1,9 @@
 const jwt = require("jsonwebtoken");
 const { AUTH_TYPE } = require("./messages");
 
+class AuthorizationSchemeError extends Error {}
+class AuthenticationError extends Error {}
+
 function getAuthorizationToken(authorizationHeader) {
   if (!/(.+) (.+)/.test(authorizationHeader)) {
     throw new AuthorizationSchemeError();
@@ -24,4 +27,6 @@ function getUserFromToken(token) {
 module.exports = {
   getUserFromToken,
   getAuthorizationToken,
+  AuthorizationSchemeError,
+  AuthenticationError,
 };

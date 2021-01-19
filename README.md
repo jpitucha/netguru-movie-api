@@ -36,11 +36,11 @@ In `POST /movies` request body you have to specify movie `title` in `JSON` forma
 
 # Documentation
 
-API documentation can be found under `/api-docs`. I used Swagger so you can also test this API at this endpoint
+API documentation can be found using browser under `/api-docs`. I used Swagger so you can also test this API at this endpoint
 
 # Tests
 
-you can fire up the tests **locally** written with `Jest` by typing `npm i` and then `npm run test`
+You can fire up the tests **locally** written with `Jest` by typing `npm i` and then `npm run test`
 
 # Libraries
 

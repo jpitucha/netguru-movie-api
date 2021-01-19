@@ -1,7 +1,12 @@
 require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
-const { getAuthorizationToken, getUserFromToken } = require("./auth");
+const {
+  getAuthorizationToken,
+  getUserFromToken,
+  AuthorizationSchemeError,
+  AuthenticationError,
+} = require("./auth");
 const { router } = require("./routes/movies/index");
 const dbConnectionProvider = require("./db/dbConnectionProvider");
 const morgan = require("morgan");
@@ -36,9 +41,6 @@ if (!hasDotEnvVars()) {
   logger.error(INCORRECT_ENV_FILE);
   process.exit(1);
 }
-
-class AuthorizationSchemeError extends Error {}
-class AuthenticationError extends Error {}
 
 function authUserMiddleware(req, res, next) {
   try {
