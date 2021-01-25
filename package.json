@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest --setupFiles dotenv/config",
     "lint": "eslint src",
-    "start": "node src/index.js",
+    "start": "nodemon -w ./src -e js -x 'node ./src/index.js'",
     "prettify": "prettier --write src"
   },
   "repository": {
@@ -31,6 +31,7 @@
     "mongoose": "^5.11.11",
     "morgan": "^1.10.0",
     "node-fetch": "^2.6.1",
+    "nodemon": "^2.0.7",
     "prettier": "^2.2.1",
     "swagger-ui-express": "^4.1.6",
     "winston": "^3.3.3",
